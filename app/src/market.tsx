@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { parseUnits, type Address } from 'viem'
 import { useReadContract, useReadContracts } from 'wagmi'
 import { erc20Abi, factoryAbi, oracleAbi, poolAbi, vaultAbi } from './abi'
-import { AAVE_ORACLE, AAVE_POOL, AGENT_URL, COLLATERAL, FACTORY, IS_TESTNET, POLL_MS, USDC } from './config'
+import { AAVE_ORACLE, AAVE_POOL, AGENT_OFF, AGENT_URL, COLLATERAL, FACTORY, IS_TESTNET, POLL_MS, USDC } from './config'
 import { fmtPct, rayToPct } from './format'
 import { decodeReserveConfig, type Market } from './math'
 import { MAINNET_VAULTS, testVault, viewOnlyReason, type VaultInfo } from './vaults'
@@ -15,6 +15,7 @@ export function useYields() {
   return useQuery({
     queryKey: ['yields', AGENT_URL],
     queryFn: async () => {
+      if (AGENT_OFF) throw new Error('no agent runs on this deployment')
       const r = await fetch(`${AGENT_URL}/yields`).catch(() => { throw new Error('the agent is not reachable') })
       if (!r.ok) throw new Error(`agent /yields answered ${r.status}`)
       const j = await r.json()

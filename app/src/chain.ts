@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 import type { Address, PublicClient } from 'viem'
 import { bucketAbi } from './abi'
-import { AGENT_SSE, IS_FORK } from './config'
+import { AGENT_OFF, AGENT_SSE, IS_FORK } from './config'
 
 /** How far back to search. rpc.monad.xyz keeps state about 1M blocks back (docs/onchain-facts.md section 5). */
 const WINDOW = 900_000n
@@ -67,6 +67,7 @@ export function useAgentLog(bucket: string | undefined, max = 8) {
   const [status, setStatus] = useState<'connecting' | 'live' | 'offline'>('connecting')
   useEffect(() => {
     if (!bucket) return
+    if (AGENT_OFF) { setStatus('offline'); return }
     const want = bucket.toLowerCase()
     let es: EventSource
     try {
@@ -96,6 +97,7 @@ export function useAgentPulse() {
     const openedAt = Date.now()
     const seen = new Set<number>() // blocks checked after this page opened (the stream replays older lines first)
     const inBlock = new Map<number, Set<string>>()
+    if (AGENT_OFF) { setState((s) => ({ ...s, status: 'offline' })); return }
     let es: EventSource
     try {
       es = new EventSource(AGENT_SSE)

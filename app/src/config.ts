@@ -32,6 +32,8 @@ export const LENDER = IS_TESTNET ? 'Open Bucket test pool' : 'Aave'
 export const LENDER_REF = IS_TESTNET ? 'the Open Bucket test pool' : 'Aave'
 export const ORACLE_NAME = IS_TESTNET ? 'the test pool oracle' : 'AaveOracle'
 
+/** VITE_AGENT_URL=off (public deployments): never call a local agent, so browsers don't ask for local-network access. */
+export const AGENT_OFF = env.VITE_AGENT_URL?.trim() === 'off'
 export const AGENT_URL: string = (env.VITE_AGENT_URL?.trim() || 'http://localhost:8787').replace(/\/+$/, '')
 export const AGENT_SSE: string = env.VITE_AGENT_SSE?.trim() || 'http://localhost:8787/events'
 /** MonadVision base URL. Links use /address/<a> and /tx/<hash>. */

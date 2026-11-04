@@ -8,6 +8,8 @@ capped tip; it can never send funds anywhere but the owner.
 
 Built at Monad Blitz Mumbai, 4 November 2026.
 
+**Live (Monad testnet): https://openbucketmonad.vercel.app** · Code: https://github.com/fahmmin/open-bucket · Logos: `app/public/brand/`
+
 ## Results
 
 - **Crash demo on a fork of Monad mainnet (real Aave V3 + real Morpho vault).** Same position twice, WETH

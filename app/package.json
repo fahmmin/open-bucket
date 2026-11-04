@@ -10,7 +10,8 @@
     "test": "node --test src/math.test.ts",
     "dev:fork": "vite --mode fork --port 5173 --strictPort",
     "dev:testnet": "vite --mode testnet --port 5174 --strictPort",
-    "dev:mainnet": "vite --mode mainnet --port 5176 --strictPort"
+    "dev:mainnet": "vite --mode mainnet --port 5176 --strictPort",
+    "build:vercel": "tsc --noEmit && vite build --mode vercel"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.59.0",
