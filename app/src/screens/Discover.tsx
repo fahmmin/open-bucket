@@ -298,7 +298,7 @@ function RoutesPanel(p: {
             )}
           </>
         )}
-      <p className="hint">{EXIT_CHECKED} (how much each vault could pay out at once). Vault yields from DefiLlama through our agent{p.yieldsError ? ', not reachable right now' : ''}; borrow cost read from {LENDER} every block. Figures a year are estimates at today's rates.</p>
+      <p className="hint">{EXIT_CHECKED} (how much each vault could pay out at once). {IS_TESTNET ? 'Testnet: the test pool charges no interest and the test vault has no strategy. Mainnet vault yields come from DefiLlama' : 'Vault yields from DefiLlama through our agent'}{p.yieldsError && !IS_TESTNET ? ', not reachable right now' : ''}; borrow cost read from {LENDER} every block. Figures a year are estimates at today's rates.</p>
     </section>
   )
 }
@@ -319,8 +319,8 @@ function RouteItem({ row, best, hero, badge, selected, onPick, mk, borrowAmt, bu
         <div className="route-title"><b>{row.name}</b>{badge && <Chip tone="acc">{badge}</Chip>}{row.viewOnly && <Chip tone="plain">View only</Chip>}</div>
         {hero && (
           <>
-            <div className="hero-num">{y !== undefined ? <><Money usd={y} /><span className="unit">a year</span></> : <span className="muted">Yield not available</span>}</div>
-            <p className="muted">{row.apy !== undefined && mk ? `${fmtPct(row.apy)} vault yield − ${fmtPct(mk.borrowApr)} borrow cost, on ${basis} borrowed` : 'No yield figure for this vault yet.'}</p>
+            <div className="hero-num">{y !== undefined ? <><Money usd={y} /><span className="unit">a year</span></> : <span className="muted">{IS_TESTNET ? 'Test vault, no yield' : 'Yield not available'}</span>}</div>
+            <p className="muted">{row.apy !== undefined && mk ? `${fmtPct(row.apy)} vault yield − ${fmtPct(mk.borrowApr)} borrow cost, on ${basis} borrowed` : IS_TESTNET ? 'On testnet the vault holds test USDC with no strategy, so it earns nothing. On mainnet this card shows the live vault yield minus the Aave borrow cost (SharpByte: about +3.7% a year).' : 'No yield figure for this vault yet.'}</p>
           </>
         )}
         <div className="chips">

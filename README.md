@@ -35,6 +35,18 @@ Built at Monad Blitz Mumbai, 4 November 2026.
 | Bucket | `#bucket-<address>` | What it holds, what it owes, health ruler, exit rules, agent log, history |
 | Crash demo | `#crash` | What happens when the price falls, with and without a bucket (fork only) |
 
+Real screenshots from the local fork of Monad mainnet (real Aave V3 and Morpho state):
+
+| Landing | Discover |
+|---|---|
+| ![Landing](docs/screenshots/landing.png) | ![Discover](docs/screenshots/discover.png) |
+| **My money** | **Bucket** |
+| ![My money](docs/screenshots/my-money.png) | ![Bucket](docs/screenshots/bucket.png) |
+
+**The crash:** same position with and without a bucket, after the price fell 4% ten times.
+
+![Crash demo](docs/screenshots/crash.png)
+
 ## Who does what today
 
 Every lender built its own permission system and none spans two protocols. DeFi Saver and Summer.fi automate

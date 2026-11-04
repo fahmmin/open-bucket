@@ -3,7 +3,7 @@ import { getAddress, isAddress, type Address } from 'viem'
 import { useAccount, useBalance, useBlockNumber, useConnect, useDisconnect, usePublicClient, useReadContract, useSwitchChain } from 'wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { erc20Abi } from './abi'
-import { COLLATERAL, EXPLORER, IS_FORK, IS_TESTNET, NETWORK_NAME, RPC_URL, chain } from './config'
+import { AGENT_OFF, COLLATERAL, EXPLORER, IS_FORK, IS_TESTNET, NETWORK_NAME, RPC_URL, chain } from './config'
 import { useAgentPulse } from './chain'
 import { explain, fmtToken, short } from './format'
 import { icons } from './icons'
@@ -123,7 +123,7 @@ function NetCard() {
     <div className="net-card">
       <div className="net-row"><strong>{NETWORK_NAME}</strong><i className={`dot ${block.data ? 'ok' : block.isError ? 'bad' : ''}`} /></div>
       <span>Block <span className="mono">{block.data ? block.data.toLocaleString('en-US') : '…'}</span></span>
-      <span>{pulse.status === 'live' ? `Agent watching${pulse.lastBlock ? `, block ${pulse.lastBlock.toLocaleString('en-US')}` : ''}` : pulse.status === 'offline' ? 'Agent offline' : 'Agent connecting'}</span>
+      <span>{pulse.status === 'live' ? `Agent watching${pulse.lastBlock ? `, block ${pulse.lastBlock.toLocaleString('en-US')}` : ''}` : pulse.status === 'offline' ? (AGENT_OFF ? 'Agent runs on our demo machine' : 'Agent offline') : 'Agent connecting'}</span>
     </div>
   )
 }
