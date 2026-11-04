@@ -1,0 +1,20 @@
+{
+  "name": "open-bucket-e2e",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "cache": "node scripts/build-cache.ts",
+    "cache:cli": "synpress ./wallet-setup",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.48.2",
+    "@synthetixio/synpress": "4.1.1",
+    "@synthetixio/synpress-cache": "0.0.13",
+    "typescript": "~5.9.0"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}

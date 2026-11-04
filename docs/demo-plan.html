@@ -1,0 +1,603 @@
+<title>Open Bucket Demo Plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one left-aligned briefing column (~68ch prose) with wider bands for the app mockups.
+   Single light look with Monad purple in the foreground (monad.xyz brand kit), same as the app. */
+:root{
+  --paper:#FBFAFF; --surface:#FFFFFF; --sunk:#F3F0FF; --ink:#0E091C; --muted:#5B5577; --line:#E6E1FB;
+  --accent:#6E54FF; --accent-ink:#FFFFFF; --accent-soft:#EEEAFF; --lavender:#5B41F0;
+  --ok:#0A7D96; --ok-soft:#E3F7FC; --warn:#9A5B00; --warn-soft:#FFF1DD; --bad:#B0177F; --bad-soft:#FFE8F8;
+  --fork-bg:#FFAE45; --fork-ink:#0E091C;
+  --font-ui:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-mono:"Roboto Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-ui);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding-block:44px 88px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:64px}
+.prose{max-width:68ch}
+h1,h2,h3{text-wrap:balance;margin:0}
+h1{font-size:clamp(44px,8vw,72px);font-weight:800;letter-spacing:-0.03em;line-height:0.98}
+h2{font-size:28px;font-weight:700;letter-spacing:-0.012em;line-height:1.15}
+h3{font-size:18px;font-weight:650;line-height:1.3}
+p{margin:0}
+a{color:var(--lavender);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.mono{font-family:var(--font-mono)}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+section{display:flex;flex-direction:column;gap:20px}
+.sec-head{display:flex;flex-direction:column;gap:8px}
+.sec-head p{color:var(--muted);max-width:68ch}
+
+/* Header */
+header{display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;align-items:center;gap:16px}
+.brand svg{flex:none;width:52px;height:52px;color:var(--accent)}
+.lede{font-size:clamp(20px,2.6vw,24px);font-weight:500;line-height:1.35;max-width:34ch;letter-spacing:-0.005em}
+.meta{color:var(--muted);max-width:60ch}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{font:inherit;font-weight:650;font-size:15px;border-radius:10px;padding:10px 16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:hover{filter:brightness(0.97)}
+
+/* Problem diagram */
+.split3{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.box .who{font-weight:700}
+.gap{display:flex;align-items:center;justify-content:center;color:var(--bad);font-weight:700;text-align:center;font-size:14px;max-width:12ch}
+.fix{margin-top:4px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:12px;padding:16px 18px}
+.fix strong{color:var(--ink)}
+
+/* Parts */
+.parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.part{background:var(--surface);padding:18px 20px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.part-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;line-height:1;padding:6px 10px;border-radius:999px;white-space:nowrap}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.acc{background:var(--accent-soft);color:var(--lavender)}
+.chip.plain{background:var(--sunk);color:var(--muted)}
+
+/* Run of show */
+.show{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.show th,.show td{text-align:left;vertical-align:top;padding:14px 16px;border-bottom:1px solid var(--line)}
+.show th{font-size:14px;color:var(--muted);font-weight:600;background:var(--sunk)}
+.show tr:last-child td{border-bottom:0}
+.show td.t{white-space:nowrap;font-weight:700;font-variant-numeric:tabular-nums;width:7.5em}
+.show td.s{width:30%}
+.show .say{font-style:normal}
+.where{display:block;margin-top:6px}
+.roles{display:flex;flex-wrap:wrap;gap:10px}
+
+/* Mockups */
+.mocks{display:flex;flex-direction:column;gap:28px}
+.mock{display:flex;flex-direction:column;gap:10px}
+.mock-cap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.mock-cap h3{font-size:17px}
+.screen{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 0 var(--line)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--sunk);font-size:13px;color:var(--muted);flex-wrap:wrap}
+.bar b{color:var(--ink);font-weight:700}
+.forkbar{background:var(--fork-bg);color:var(--fork-ink);font-weight:700;padding:9px 16px;font-size:14px}
+.pad{padding:18px}
+
+/* Routes */
+.routes{display:flex;flex-direction:column}
+.route{display:grid;grid-template-columns:minmax(0,2.2fr) repeat(3,minmax(0,1fr)) auto;gap:16px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.route:last-child{border-bottom:0}
+.route.head{font-size:13px;color:var(--muted);font-weight:600;padding-block:10px}
+.route .steps{display:flex;flex-direction:column;gap:2px;min-width:0}
+.route .steps b{font-weight:650}
+.route .k{display:none;font-size:12px;color:var(--muted)}
+.route .v{font-weight:650;font-variant-numeric:tabular-nums}
+.route.dim{opacity:.62}
+.detail{border-top:1px solid var(--line);background:var(--sunk);padding:16px 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.detail h4{margin:0 0 6px;font-size:14px}
+.detail ol,.detail ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px;font-size:14px}
+
+/* Bucket */
+.bucket{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:0}
+.bucket > div{min-width:0}
+.bucket .left{padding:18px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:16px}
+.bucket .right{padding:18px;display:flex;flex-direction:column;gap:12px;background:var(--sunk)}
+.taccount{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--ink)}
+.taccount > div{padding:10px 0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.taccount > div + div{border-left:2px solid var(--ink);padding-left:14px}
+.taccount > div:first-child{padding-right:14px}
+.tk{font-size:13px;color:var(--muted);font-weight:600}
+.row{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.row span:last-child{font-variant-numeric:tabular-nums;font-weight:650;text-align:right}
+.equity{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-top:1px solid var(--line);padding-top:12px;flex-wrap:wrap}
+.equity .big{font-size:30px;font-weight:800;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+.rules{display:flex;flex-direction:column;gap:8px}
+.rule{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:14px;flex-wrap:wrap}
+
+/* Health ruler */
+.ruler{position:relative;height:58px;margin-top:4px}
+.track{position:absolute;left:0;right:0;top:20px;height:10px;border-radius:5px;background:linear-gradient(to right,var(--bad-soft) 0 14.29%,var(--warn-soft) 14.29% 50%,var(--ok-soft) 50% 100%);border:1px solid var(--line)}
+.mark{position:absolute;top:12px;height:26px;width:2px;background:var(--ink)}
+.mark.exit{background:var(--accent)}
+.mark-l{position:absolute;top:40px;font-size:12px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
+.mark-l.exit{color:var(--lavender);font-weight:650}
+.needle{position:absolute;top:6px;width:4px;height:34px;border-radius:2px;transform:translateX(-50%);transition:left .35s ease}
+.needle.ok{background:var(--ok)}.needle.warn{background:var(--warn)}.needle.bad{background:var(--bad)}
+.hf-read{position:absolute;top:-14px;transform:translateX(-50%);font-weight:800;font-variant-numeric:tabular-nums;font-size:15px;transition:left .35s ease;white-space:nowrap}
+
+/* Agent log */
+.log{list-style:none;margin:0;padding:0;font-family:var(--font-mono);font-size:12.5px;display:flex;flex-direction:column;gap:4px;min-height:9.5em}
+.log li{display:grid;grid-template-columns:8.4em 1fr auto;gap:8px;color:var(--muted)}
+.log li:first-child{color:var(--ink)}
+.log .act{font-weight:500;color:var(--ok)}
+.log .act.go{color:var(--accent)}
+
+/* Crash */
+.crash-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.price{font-weight:700;font-variant-numeric:tabular-nums}
+.duo{display:grid;grid-template-columns:1fr 1fr}
+.duo > div{padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.duo > div + div{border-left:1px solid var(--line)}
+.status{font-weight:650;font-size:15px;min-height:3em}
+.status.ok{color:var(--ok)}.status.warn{color:var(--warn)}.status.bad{color:var(--bad)}
+.verdict{margin:0 18px 18px;border-radius:10px;padding:14px 16px;background:var(--accent-soft);font-weight:600}
+
+/* Lists and cards */
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.list{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px}
+.list li{padding-left:2px}
+.evidence{display:flex;flex-direction:column;gap:12px}
+.ev{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.q{counter-reset:q;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.q li{counter-increment:q;display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.q li::before{content:counter(q);font-weight:800;font-size:20px;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1.2}
+.q b{display:block;margin-bottom:2px}
+.timeline{display:flex;flex-direction:column;border-left:2px solid var(--line);margin-left:6px}
+.timeline > div{position:relative;padding:0 0 18px 20px;display:flex;flex-direction:column;gap:2px}
+.timeline > div::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
+.timeline .when{font-weight:700;font-variant-numeric:tabular-nums}
+.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.check{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.check ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:15px}
+footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:6px;max-width:80ch}
+
+@media (max-width:760px){
+  .split3{grid-template-columns:1fr}
+  .gap{max-width:none;padding:2px 0}
+  .parts,.cols,.checks{grid-template-columns:1fr}
+  .show thead{display:none}
+  .show,.show tbody,.show tr,.show td{display:block;width:100%}
+  .show tr{border-bottom:1px solid var(--line);padding:12px 0}
+  .show tr:last-child{border-bottom:0}
+  .show td{border:0;padding:4px 16px}
+  .show td.t,.show td.s{width:auto}
+  .route{grid-template-columns:1fr 1fr;gap:8px 14px}
+  .route.head{display:none}
+  .route .steps{grid-column:1 / -1}
+  .route .k{display:block}
+  .detail{grid-template-columns:1fr}
+  .bucket{grid-template-columns:1fr}
+  .bucket .left{border-right:0;border-bottom:1px solid var(--line)}
+  .duo{grid-template-columns:1fr}
+  .duo > div + div{border-left:0;border-top:1px solid var(--line)}
+  .ev{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  .needle,.hf-read{transition:none}
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 52 52" aria-hidden="true">
+        <path d="M14 13 C14 4, 38 4, 38 13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <path d="M9 16 H43 L38.5 45 H13.5 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M12.2 29 H39.8" stroke="currentColor" stroke-width="3"/>
+        <path d="M13.5 45 L12.2 29 H39.8 L38.5 45 Z" fill="currentColor" opacity=".22"/>
+      </svg>
+      <h1>Open Bucket</h1>
+    </div>
+    <p class="lede">Exit rules for your DeFi loan. An agent watches every Monad block and closes your position before liquidation, and the contract only lets it pay you.</p>
+    <p class="meta">Our plan for the 3-minute pitch and demo at Monad Blitz Mumbai on 4 November 2026. We would value your feedback, especially on the six questions at the end.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="#questions">Jump to the questions</a>
+      <a class="btn" href="#show">See the 3-minute show</a>
+    </div>
+  </header>
+
+  <section aria-labelledby="problem-h">
+    <div class="sec-head">
+      <h2 id="problem-h">The problem</h2>
+      <p>A common move on Monad: borrow USDC against ETH on Aave, then put that USDC in a vault to earn yield. The loan lives in one protocol and the money that could repay it lives in another.</p>
+    </div>
+    <div class="split3">
+      <div class="box"><span class="who">Aave sees</span><span>2 WETH collateral</span><span>2,600 USDC debt</span></div>
+      <div class="gap">Nobody sees both sides</div>
+      <div class="box"><span class="who">The vault sees</span><span>2,574 USDC deposited</span><span>No idea there is a loan</span></div>
+    </div>
+    <p class="prose">When ETH drops, Aave only sees the loan. It liquidates the position and the liquidator keeps a 5 to 10% bonus, while the USDC that could have repaid the loan sits untouched in the vault.</p>
+    <div class="fix prose"><strong>Open Bucket</strong> puts the loan and the vault deposit inside one contract that belongs to you. You set exit rules, such as "exit if health falls below 1.15" or "exit by Friday". When a rule is true, anyone can trigger the exit: the contract pulls the USDC out of the vault, repays Aave, and returns your ETH to you.</div>
+  </section>
+
+  <section aria-labelledby="build-h">
+    <div class="sec-head">
+      <h2 id="build-h">What we are building today</h2>
+      <p>Four small pieces. The labels say where each one runs during the demo.</p>
+    </div>
+    <div class="parts">
+      <div class="part">
+        <div class="part-top"><h3>Bucket contract</h3><span class="chip ok">Live on Monad testnet</span></div>
+        <p>Holds your Aave loan and your vault deposit together. Stores your exit rules. Has one exit function that anyone can call once a rule is true, and it always pays the owner.</p>
+      </div>
+      <div class="part">
+        <div class="part-top"><h3>Routes</h3><span class="chip ok">Live rates</span></div>
+        <p>The loan-plus-vault combinations we support, with live rates. Each route lists every step, contract and risk before you sign anything.</p>
+      </div>
+      <div class="part">
+        <div class="part-top"><h3>Agent</h3><span class="chip acc">Open source, anyone can run it</span></div>
+        <p>A small program that checks every bucket on every block and calls exit when a rule is true. It earns a small capped tip for doing it. It cannot change where the money goes.</p>
+      </div>
+      <div class="part">
+        <div class="part-top"><h3>Dashboard</h3><span class="chip plain">Web app</span></div>
+        <p>One screen for the whole position: what it holds, what it owes, its health, your rules, and a log of every decision the agent made.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="show" aria-labelledby="show-h">
+    <div class="sec-head">
+      <h2 id="show-h">The 3-minute show</h2>
+      <p>Two slides and the live app. One person talks, one person clicks. Nobody does both.</p>
+    </div>
+    <div class="roles">
+      <span class="chip acc">Speaker: tells the story, keeps time</span>
+      <span class="chip plain">Driver: switches tabs, clicks, never talks</span>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="show">
+      <thead><tr><th>Time</th><th>On screen</th><th>What we say</th></tr></thead>
+      <tbody>
+        <tr><td class="t">0:00–0:20</td><td class="s">Slide 1: the 3am story</td><td>"Borrow USDC against your ETH on Aave and put it in a vault for yield. ETH drops at 3am. Aave liquidates you and the liquidator keeps a bonus, while the USDC that could have repaid the loan sits in another protocol. Aave can't see it."</td></tr>
+        <tr><td class="t">0:20–0:35</td><td class="s">Slide 1: one line and the diagram</td><td>"Open Bucket puts the loan and the yield in one contract with your exit rules. An agent checks every Monad block and exits before liquidation. The contract only lets it pay you."</td></tr>
+        <tr><td class="t">0:35–1:00</td><td class="s">App on the mainnet fork: Routes, then our bucket<span class="where chip ok">Real Aave state</span></td><td>"These are Aave's real rates on Monad. Every route shows exactly what it will do before you sign. Here is the bucket: what it holds, what it owes, and the agent checking it every block."</td></tr>
+        <tr><td class="t">1:00–2:00</td><td class="s">App on the fork: the crash, split screen<span class="where chip warn">Fork, orange banner</span></td><td>"We can't crash ETH for real, so this runs on a copy of Monad mainnet with the real Aave market. Same position twice: plain Aave on the left, a bucket on the right." The driver drops the price step by step. "Same crash. The left one lost 0.042 WETH, about $64, to the liquidation bonus. The right one paid a 0.002 WETH tip."</td></tr>
+        <tr><td class="t">2:00–2:20</td><td class="s">Slide 2: what the agent can and can't do</td><td>"The agent can only call exit, only when your rule is true, and the money can only go to the owner. Anyone can run an agent, so you don't have to trust us either."</td></tr>
+        <tr><td class="t">2:20–2:40</td><td class="s">Slide 2: why Monad</td><td>"About $788M of Monad's $912M DeFi TVL is lending, and no automation tool covers those positions yet. With 300 ms blocks the agent acts in the very next block."</td></tr>
+        <tr><td class="t">2:40–2:55</td><td class="s">App on Monad testnet: our live bucket<span class="where chip ok">Public chain</span></td><td>"The same contracts are live on Monad testnet. This bucket had a deadline two minutes into this talk. It just passed, and our agent closed it on its own. Here is the transaction."</td></tr>
+        <tr><td class="t">2:55–3:00</td><td class="s">App</td><td>"Open Bucket. Exit rules for your DeFi loans. Thank you."</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="mock-h">
+    <div class="sec-head">
+      <h2 id="mock-h">Demo preview</h2>
+      <p>Mockups of the three screens we show. They use example numbers, not live data.</p>
+    </div>
+    <div class="mocks">
+
+      <div class="mock">
+        <div class="mock-cap"><h3>Routes: every step and risk before you sign</h3><span class="chip ok">Shown on mainnet</span></div>
+        <div class="screen">
+          <div class="bar"><span><b>Routes</b> on Monad mainnet</span><span>Rates refresh every block</span></div>
+          <div class="routes">
+            <div class="route head"><span>Route</span><span>Borrow cost</span><span>Vault yield</span><span>Net on $1,000</span><span></span></div>
+            <div class="route">
+              <div class="steps"><b>Supply WETH on Aave, borrow USDC, deposit in SharpByte USDC High Yield</b><span class="muted">Exit back to you at any time</span></div>
+              <div><span class="k">Borrow cost</span><span class="v">5.0% a year</span></div>
+              <div><span class="k">Vault yield</span><span class="v">8.7% a year</span></div>
+              <div><span class="k">Net on $1,000</span><span class="v">+$37 a year</span></div>
+              <span class="chip ok">Supported</span>
+            </div>
+            <div class="route">
+              <div class="steps"><b>Supply WETH on Aave, borrow USDC, deposit in August USDC V2</b><span class="muted">Any ERC-4626 vault works on this side</span></div>
+              <div><span class="k">Borrow cost</span><span class="v">5.0% a year</span></div>
+              <div><span class="k">Vault yield</span><span class="v">9.5% a year</span></div>
+              <div><span class="k">Net on $1,000</span><span class="v">+$45 a year</span></div>
+              <span class="chip ok">Supported</span>
+            </div>
+            <div class="route dim">
+              <div class="steps"><b>Borrow on Euler, Morpho or Curvance instead of Aave</b><span class="muted">Needs a lender adapter</span></div>
+              <div><span class="k">Borrow cost</span><span class="v">n/a</span></div>
+              <div><span class="k">Vault yield</span><span class="v">n/a</span></div>
+              <div><span class="k">Net on $1,000</span><span class="v">n/a</span></div>
+              <span class="chip plain">Next</span>
+            </div>
+          </div>
+          <div class="detail">
+            <div><h4>What this route will do</h4><ol><li>Supply 2 WETH to Aave</li><li>Borrow 2,600 USDC from Aave</li><li>Keep 26 USDC in the bucket and deposit 2,574 USDC in the vault</li></ol></div>
+            <div><h4>How the exit works</h4><ol><li>Withdraw USDC from the vault</li><li>Repay the Aave loan</li><li>Withdraw your WETH</li><li>Send everything to you, minus a capped tip if someone else triggered it</li></ol></div>
+            <div><h4>Risks we show you</h4><ul><li>The vault may not have enough cash for an instant withdrawal</li><li>Prices come from Chainlink and Aave's oracle</li><li>Smart contract risk in Aave, the vault and our contract</li></ul></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mock">
+        <div class="mock-cap"><h3>Bucket: one view of the loan and the yield</h3><span class="chip ok">Shown on mainnet</span></div>
+        <div class="screen">
+          <div class="bar"><span><b>Your bucket</b> <span class="mono">0x3f…a1c</span></span><span>Owner: you</span></div>
+          <div class="bucket">
+            <div class="left">
+              <div class="taccount">
+                <div><span class="tk">What it holds</span>
+                  <div class="row"><span>WETH on Aave</span><span>2.0000 WETH</span></div>
+                  <div class="row"><span>SharpByte vault</span><span>2,574.30 USDC</span></div>
+                  <div class="row"><span>Exit buffer</span><span>26.00 USDC</span></div>
+                </div>
+                <div><span class="tk">What it owes</span>
+                  <div class="row"><span>Aave loan</span><span>2,600.30 USDC</span></div>
+                </div>
+              </div>
+              <div class="equity"><span class="muted">Equity, priced by Aave's oracle</span><span class="big">$4,642.48</span></div>
+              <div>
+                <span class="tk">Health</span>
+                <div class="ruler" aria-label="Health factor 1.50. Liquidation at 1.00, your exit line at 1.15.">
+                  <div class="track"></div>
+                  <div class="mark" style="left:14.29%"></div><span class="mark-l" style="left:14.29%">1.00 liquidation</span>
+                  <div class="mark exit" style="left:35.71%"></div><span class="mark-l exit" style="left:35.71%">1.15 your exit line</span>
+                  <div class="needle ok" style="left:85.71%"></div><span class="hf-read" style="left:85.71%">1.50</span>
+                </div>
+              </div>
+              <div class="rules">
+                <span class="tk">Your exit rules</span>
+                <div class="rule"><span>Exit if health falls below 1.15</span><span class="chip ok">Not triggered</span></div>
+                <div class="rule"><span>Exit by 15:42 today</span><span class="chip ok">Not triggered</span></div>
+              </div>
+            </div>
+            <div class="right">
+              <span class="tk">Agent log, one line per block</span>
+              <ol class="log" id="agentlog" aria-live="off"></ol>
+              <span class="muted" style="font-size:13px">The agent reads your rules from the contract each block. It can only call exit.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mock">
+        <div class="mock-cap"><h3>The crash: same position, with and without a bucket</h3><span class="chip warn">Shown on a labelled fork</span></div>
+        <div class="screen">
+          <div class="forkbar">Fork of Monad mainnet. Prices on this screen are changed by us for the demo.</div>
+          <div class="crash-top">
+            <span class="price" id="price">WETH price: 100% of start</span>
+            <div class="cta-row">
+              <button class="btn primary" id="play" type="button">Play the crash</button>
+              <button class="btn" id="reset" type="button">Reset</button>
+            </div>
+          </div>
+          <div class="duo">
+            <div>
+              <h3>Plain Aave position</h3>
+              <div class="ruler" id="r-plain">
+                <div class="track"></div>
+                <div class="mark" style="left:14.29%"></div><span class="mark-l" style="left:14.29%">1.00 liquidation</span>
+                <div class="needle ok"></div><span class="hf-read"></span>
+              </div>
+              <p class="status" id="s-plain">Healthy. Nobody is watching it.</p>
+            </div>
+            <div>
+              <h3>Same position in a Bucket</h3>
+              <div class="ruler" id="r-bucket">
+                <div class="track"></div>
+                <div class="mark" style="left:14.29%"></div><span class="mark-l" style="left:14.29%">1.00</span>
+                <div class="mark exit" style="left:35.71%"></div><span class="mark-l exit" style="left:35.71%">1.15 exit line</span>
+                <div class="needle ok"></div><span class="hf-read"></span>
+              </div>
+              <p class="status" id="s-bucket">Healthy. The agent checks it every block.</p>
+            </div>
+          </div>
+          <p class="verdict" id="verdict" hidden>Same crash. The plain position lost 0.042 WETH (about $64) to the liquidation bonus. The bucket exited below its 1.15 line, paid a 0.002 WETH tip, and returned 1.998 WETH with the loan fully repaid.</p>
+        </div>
+        <p class="muted" style="font-size:14px">Preview of the real result from our fork of Monad mainnet: 2 WETH against a 2,600 USDC Aave loan at health 1.50, Aave Monad's WETH threshold 84% and bonus 5.5%, price falling 4% per step.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section aria-labelledby="monad-h">
+    <div class="sec-head">
+      <h2 id="monad-h">Why this belongs on Monad</h2>
+      <p>The honest answer to "could this run on another chain?" is yes, on any EVM chain with Aave. We are building it here because the money and the gap are here.</p>
+    </div>
+    <div class="evidence">
+      <div class="ev"><span>Lending is most of Monad DeFi: about $788M of roughly $912M TVL.</span><span class="chip ok">DefiLlama, 3 Nov 2026</span></div>
+      <div class="ev"><span>No position automation is live on Monad mainnet. DeFi Saver, Summer.fi and Instadapp are not deployed, and Gelato Web3 Functions are testnet only.</span><span class="chip ok">Checked 3 Nov 2026</span></div>
+      <div class="ev"><span>Blocks every 300 ms with 600 ms finality mean the agent acts in the next block, so the price moves less between your rule firing and your exit landing.</span><span class="chip acc">Our reasoning</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="comp-h">
+    <div class="sec-head">
+      <h2 id="comp-h">Who does what today</h2>
+      <p>Everyone does a piece. Every lender built its own permission system, and none spans two protocols, so a loan on Aave with yield on Morpho has nobody watching both sides. From our research on 3 and 4 November 2026.</p>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="show">
+      <thead><tr><th>Product</th><th>On Monad</th><th>Loan and yield together</th><th>The limit for this job</th></tr></thead>
+      <tbody>
+        <tr><td class="t">DeFi Saver</td><td>No</td><td>No, loan only</td><td>Allowlisted bots manage the loan (stop-loss, repay); they never touch your outside yield.</td></tr>
+        <tr><td class="t">Summer.fi</td><td>No</td><td>No, loan only</td><td>Stop-loss and trailing stop on the loan side only.</td></tr>
+        <tr><td class="t">Instadapp</td><td>No</td><td>No</td><td>Smart accounts for DeFi, not deployed on Monad.</td></tr>
+        <tr><td class="t">Gearbox</td><td>Yes, $0.25M</td><td>Yes</td><td>Closest model, but the debt must come from Gearbox's own pools. You can't bring your Aave loan.</td></tr>
+        <tr><td class="t">Curvance</td><td>Yes</td><td>No</td><td>leverageFor / deleverageFor delegation works inside Curvance only.</td></tr>
+        <tr><td class="t">Morpho</td><td>Yes</td><td>No</td><td>Pre-liquidation and Bundler3 cover Morpho markets, one transaction at a time.</td></tr>
+        <tr><td class="t">Euler</td><td>Yes</td><td>No</td><td>EVC operators act on Euler vaults only.</td></tr>
+        <tr><td class="t">Aave</td><td>Yes, V3</td><td>No</td><td>Credit delegation only; V4 Position Managers are governance-gated and not on Monad.</td></tr>
+        <tr><td class="t">Enso, LI.FI</td><td>Yes</td><td>No</td><td>One-transaction zaps across protocols; nothing watches the position afterwards.</td></tr>
+        <tr><td class="t">Gelato, FastLane</td><td>Testnet / unclear</td><td>n/a</td><td>Keeper infrastructure, not a product. Gelato Web3 Functions are testnet-only; FastLane's mainnet status is unknown.</td></tr>
+        <tr><td class="t">DefiLlama Yields</td><td>n/a</td><td>No</td><td>Lists yields; doesn't net the borrow cost, open a position or protect it.</td></tr>
+        <tr><td class="t"><b>Open Bucket</b></td><td><b>Yes, testnet</b></td><td><b>Yes</b></td><td>Aave is the only lender today and there are no swaps yet. Next: flash-loan exits and more lenders.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="scope-h">
+    <div class="cols">
+      <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+        <h2 id="scope-h">Left out on purpose</h2>
+        <ul class="list">
+          <li>No AI model moves money. The agent follows your rules and nothing else. That is the safe kind of agent for a loan.</li>
+          <li>No token and no points.</li>
+          <li>Aave is the only lender in the MVP. Any ERC-4626 vault works on the yield side.</li>
+          <li>No swaps in the MVP. If the vault returns less than the debt, exit stops and says why. Rounding dust up to 0.01 USDC is handled. Next: flash-loan exits, which Aave Monad supports at 0.05%.</li>
+          <li>No leverage loops.</li>
+        </ul>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+        <h2>Keeping the demo honest</h2>
+        <ul class="list">
+          <li><b>Real Aave on a fork of Monad mainnet, labelled on screen:</b> the routes, our bucket and the crash. We can't move ETH's real price, so we change the oracle price on a local copy of mainnet with the real Aave market and a real Morpho vault.</li>
+          <li><b>Live on Monad testnet:</b> the same contracts and agent on a public chain. Aave isn't deployed on Monad testnet, so lending there runs on our Aave-compatible test pool, labelled in the app.</li>
+          <li><b>Backup:</b> a screen recording of a full rehearsal, introduced as a recording if the Wi-Fi or RPC fails.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="questions" aria-labelledby="q-h">
+    <div class="sec-head">
+      <h2 id="q-h">Questions for you</h2>
+      <p>Five minutes of your advice on these would change what we build in the next three hours.</p>
+    </div>
+    <ol class="q">
+      <li><div><b>Format</b>Is the 3 minutes for pitch and demo together, with Q&amp;A after? Who judges, and what do they weigh most?</div></li>
+      <li><div><b>Fork demo</b>We show a real bucket on mainnet and run the price crash on a clearly labelled fork. Is that acceptable to the judges?</div></li>
+      <li><div><b>Collateral and vault</b>MON isn't an Aave Monad reserve, so we use WETH. Is a MON listing coming? Would you trust SharpByte or August as the USDC vault, or is there a better one with instant withdrawals?</div></li>
+      <li><div><b>RPC on stage</b>We use wss://rpc.monad.xyz for new blocks and the public testnet RPC. Are there rate limits we should plan around, or a better RPC for the demo?</div></li>
+      <li><div><b>Keepers</b>Is there an automation or keeper network live on Monad mainnet that we should plug into instead of running our own agent?</div></li>
+      <li><div><b>Demand</b>Do you see many users borrowing on one protocol and depositing in another on Monad? Who from Aave, Euler, Morpho or Curvance should see this?</div></li>
+    </ol>
+    <p class="muted">And the one we always ask: what would make this pitch stronger for you?</p>
+  </section>
+
+  <section aria-labelledby="plan-h">
+    <div class="sec-head">
+      <h2 id="plan-h">Where we are</h2>
+      <p>Status at 16:05. The code freeze time is still to be confirmed.</p>
+    </div>
+    <div class="cols">
+      <div class="timeline">
+        <div><span class="when">Done</span><span>Bucket and factory contracts with 19 tests: 15 local, 4 against the real Aave V3 market on a Monad mainnet fork.</span></div>
+        <div><span class="when">Done</span><span>Live on Monad testnet: factory <span class="mono">0x941F…5102</span>, the agent watching it on a public chain.</span></div>
+        <div><span class="when">Done</span><span>Web app in Monad's brand: Routes, Bucket and Crash. The crash demo works end to end on the fork, with reset.</span></div>
+        <div><span class="when">Running</span><span>Synpress wallet tests: connect MetaMask, open a bucket, exit it.</span></div>
+        <div><span class="when">Next</span><span>Three timed rehearsals, the backup recording, then submit on blitz.devnads.com.</span></div>
+      </div>
+      <div class="check">
+        <h3>Contract tests, on a fork of Monad mainnet</h3>
+        <ul>
+          <li>Open puts MON on Aave, records the loan and deposits USDC in the vault</li>
+          <li>The owner can exit at any time and gets everything back</li>
+          <li>A stranger cannot exit while no rule is true</li>
+          <li>After the deadline, or below the health floor, a stranger can exit. The money still goes to the owner and the stranger gets only the capped tip</li>
+          <li>Exit twice fails cleanly; exit with too little in the vault stops with a clear error</li>
+          <li>Only the owner can change rules or rescue tokens</li>
+          <li>Fuzz: random price drops and waits never leave the owner with less than the position's value minus the tip</li>
+        </ul>
+      </div>
+    </div>
+    <div class="checks">
+      <div class="check">
+        <h3>Agent and app checks</h3>
+        <ul>
+          <li>Agent dry-run mode logs decisions without sending anything</li>
+          <li>At most one exit per bucket; reconnects after an RPC drop</li>
+          <li>Explicit gas limit on every transaction, because Monad charges for the gas limit, not gas used</li>
+          <li>Every number on screen matches a direct contract read. USDC has 6 decimals, MON has 18</li>
+          <li>Wrong-network prompt, plus loading, empty and error states</li>
+          <li>The fork banner shows whenever the app points at the local fork</li>
+          <li>Readable on a projector: 1920×1080 at 125% zoom</li>
+        </ul>
+      </div>
+      <div class="check">
+        <h3>Rehearsal checklist</h3>
+        <ul>
+          <li>Burner wallet funded, approvals done before we go on stage</li>
+          <li>Agent running; fork started from a saved snapshot; reset script tested</li>
+          <li>Deadline on the mainnet bucket set to two minutes after our start time</li>
+          <li>Tabs in order: slide 1, app, slide 2. Notifications off</li>
+          <li>Phone hotspot ready; backup recording on the desktop</li>
+          <li>Timer running in every rehearsal. Anything over 2:50 gets cut</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>TVL figures from DefiLlama on 3 November 2026. Aave Monad parameters verified onchain on 4 November 2026. Mockup numbers come from our fork demo; vault yields change every block.</span>
+    <span>Team Open Bucket, Monad Blitz Mumbai.</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var reduce = false;
+  try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e) {}
+
+  // Agent log: one line per 300 ms block, newest on top (example block numbers).
+  var log = document.getElementById('agentlog');
+  var block = 41882113, secsLeft = 130;
+  function fmt(s){ s = Math.max(0, Math.floor(s)); return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0'); }
+  function addLine(){
+    var li = document.createElement('li');
+    li.innerHTML = '<span>#' + block.toLocaleString('en-US') + '</span><span>health 1.50, deadline in ' + fmt(secsLeft) + '</span><span class="act">hold</span>';
+    log.insertBefore(li, log.firstChild);
+    while (log.children.length > 7) log.removeChild(log.lastChild);
+    block += 1; secsLeft = Math.max(0, secsLeft - 0.3);
+  }
+  for (var i = 0; i < 7; i++) addLine();
+  if (!reduce) setInterval(addLine, 300);
+
+  // Crash preview: health is proportional to the collateral price in this example.
+  var STEPS = [1, .96, .92, .88, .84, .80, .76, .72, .68, .64];
+  var HF0 = 1.5, FLOOR = 1.15;
+  function pos(hf){ return Math.max(0, Math.min(1, (hf - 0.9) / 0.7)) * 100; }
+  function zone(hf){ return hf < 1 ? 'bad' : hf < 1.25 ? 'warn' : 'ok'; }
+  function setRuler(id, hf){
+    var r = document.getElementById(id);
+    var n = r.querySelector('.needle'), t = r.querySelector('.hf-read');
+    n.style.left = pos(hf) + '%'; t.style.left = pos(hf) + '%';
+    n.className = 'needle ' + zone(hf); t.textContent = hf.toFixed(2);
+    r.setAttribute('aria-label', 'Health factor ' + hf.toFixed(2));
+  }
+  function setStatus(id, text, tone){ var s = document.getElementById(id); s.textContent = text; s.className = 'status ' + tone; }
+  var timer = null, step = 0, exited = false, bucketHf = HF0;
+  function reset(){
+    if (timer) { clearInterval(timer); timer = null; }
+    step = 0; exited = false; bucketHf = HF0;
+    document.getElementById('price').textContent = 'WETH price: 100% of start';
+    setRuler('r-plain', HF0); setRuler('r-bucket', HF0);
+    setStatus('s-plain', 'Healthy. Nobody is watching it.', 'ok');
+    setStatus('s-bucket', 'Healthy. The agent checks it every block.', 'ok');
+    document.getElementById('verdict').hidden = true;
+    document.getElementById('play').disabled = false;
+  }
+  function tick(){
+    var p = STEPS[step], hf = HF0 * p;
+    document.getElementById('price').textContent = 'WETH price: ' + Math.round(p * 100) + '% of start';
+    setRuler('r-plain', hf);
+    setStatus('s-plain', hf < 1 ? 'Liquidated. 0.042 WETH lost to the liquidation bonus.' : hf < 1.25 ? 'Getting close to liquidation. Nothing happens.' : 'Healthy. Nobody is watching it.', zone(hf));
+    if (!exited) {
+      bucketHf = hf; setRuler('r-bucket', hf);
+      if (hf < FLOOR) { exited = true; setStatus('s-bucket', 'Rule hit below 1.15. Agent exited in the next block. Loan repaid, 1.998 WETH back to you.', 'ok'); }
+      else setStatus('s-bucket', hf < 1.25 ? 'Watching. Exit line is 1.15.' : 'Healthy. The agent checks it every block.', zone(hf));
+    }
+    step += 1;
+    if (hf < 1 || step >= STEPS.length) {
+      clearInterval(timer); timer = null;
+      document.getElementById('verdict').hidden = false;
+    }
+  }
+  document.getElementById('play').addEventListener('click', function(){
+    reset(); this.disabled = true;
+    if (reduce) { for (var i = 0; i < STEPS.length; i++) { tick(); if (!document.getElementById('verdict').hidden) break; } return; }
+    tick(); timer = setInterval(tick, 550);
+  });
+  document.getElementById('reset').addEventListener('click', reset);
+  reset();
+})();
+</script>

@@ -1,0 +1,25 @@
+# Secrets: never commit keys. .env.example / .env.fork / .env.testnet hold only public addresses.
+.env
+.env.local
+**/.env
+!**/.env.example
+!**/.env.fork
+!**/.env.testnet
+!**/.env.mainnet
+
+# Build output and caches
+node_modules/
+dist/
+contracts/out/
+contracts/cache/
+contracts/broadcast/**/dry-run/
+agent/fork/cache/
+agent/fork/.snapshot
+
+# Pre-Discover copy of app/src kept for rollback today
+_backup-app-src-v1/
+
+# Synpress / Playwright
+e2e/.cache-synpress/
+e2e/test-results/
+e2e/playwright-report/

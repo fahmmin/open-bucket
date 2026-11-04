@@ -1,0 +1,19 @@
+{
+  "name": "open-bucket-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open Bucket keeper: watches buckets every Monad block and calls exit() when a rule is true",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/agent.ts",
+    "dev": "node --watch src/agent.ts",
+    "test": "node --test",
+    "fork:start": "node scripts/fork-start.ts"
+  },
+  "dependencies": {
+    "viem": "^2.57.16"
+  }
+}
